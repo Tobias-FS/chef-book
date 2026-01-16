@@ -1,0 +1,17 @@
+{
+    "name": "tobias/chef-book",
+    "description": "Projeto de estudos",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Tobias\\ChefBook\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tobias FS",
+            "email": "tobias.fs404@gmail.com"
+        }
+    ],
+    "require": {}
+}
