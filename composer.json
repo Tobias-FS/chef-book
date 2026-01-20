@@ -3,9 +3,12 @@
     "description": "Projeto de estudos",
     "type": "library",
     "autoload": {
-        "psr-4": {
-            "Tobias\\ChefBook\\": "src/"
-        }
+        "classmap": [ 
+            "src/" 
+        ],
+        "files": [
+            "src/infra/banco/conexao.php"
+        ]
     },
     "authors": [
         {
