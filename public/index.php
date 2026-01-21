@@ -13,7 +13,8 @@ $rotas = [
 ];
 
 foreach( $rotas as $r ) {
-    require __DIR__ .  $r;
+    $f = require __DIR__ .  $r;
+    $f( $app, $pdo );
 }
 
 $app->run();
