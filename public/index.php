@@ -9,7 +9,7 @@ $app = AppFactory::create();
 $pdo = criarConexao();
 
 $rotas = [
-    
+    '/../src/ingrediente/rotas-ingrediente.php'
 ];
 
 foreach( $rotas as $r ) {
