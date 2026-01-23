@@ -21,5 +21,11 @@
         "robmorgan/phinx": "^0.16.10",
         "slim/slim": "4.*",
         "slim/psr7": "^1.8"
+    },
+    "require-dev": {
+        "kahlan/kahlan": "^6.0"
+    },
+    "scripts": {
+        "test": "./vendor/bin/kahlan"
     }
 }
