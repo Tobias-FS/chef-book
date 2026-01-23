@@ -7,7 +7,7 @@ class Visao {
 
     public function __construct( 
         protected Request $request, 
-        protected Response $respose,
+        protected Response $response,
         protected array $args 
     ) {}
 
