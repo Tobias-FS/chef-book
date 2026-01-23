@@ -6,7 +6,7 @@ class RepositorioEmBDR {
         private PDO $pdo 
     ) {}
 
-    public function executar( string $sql, array $parametros, string $mensagemErro = '' ): PDOStatement {
+    public function executar( string $sql, array $parametros = [], string $mensagemErro = '' ): PDOStatement {
         try {
             $ps = $this->pdo->prepare( $sql );
             $ps->execute( $parametros );
