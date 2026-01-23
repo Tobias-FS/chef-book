@@ -3,7 +3,7 @@
 class GestorIngrediente {
 
     public function __construct( 
-        private  $repositorio
+        private RepositorioIngrediente $repositorio
     ) {}
 
     public function listar(): array {
