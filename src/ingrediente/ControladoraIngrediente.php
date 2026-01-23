@@ -5,8 +5,8 @@ use Slim\Psr7\Response;
 class ControladoraIngrediente {
 
     public function __construct(
-        private $visao,
-        private $gestor,
+        private VisaoIngrediente $visao,
+        private GestorIngrediente $gestor,
     ) {}
 
     public function ingredientes(): Response {
@@ -18,7 +18,7 @@ class ControladoraIngrediente {
         }
     }
 
-    public function ingredientesComId() {
+    public function ingredientesComId(): Response {
         try {
             $id = $this->visao->idIngrediente();
             $ingrediente = $this->gestor->listarComId( $id );
