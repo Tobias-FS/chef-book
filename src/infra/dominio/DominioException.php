@@ -1,3 +1,3 @@
 <?php
 
-class DominioException extends DominioException {}
+class DominioException extends RuntimeException {}
