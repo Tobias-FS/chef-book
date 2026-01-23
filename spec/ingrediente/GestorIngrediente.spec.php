@@ -9,7 +9,7 @@ use function Kahlan\it;
 describe( "GestorIngrediente", function() {
     describe( "listarComId()", function() {
         it( "deve retornar erro caso id não for um numero", function() {
-            $repo = Double::instance();
+            $repo = Double::instance( [ 'implements' => 'RepositorioIngrediente' ] );
             $gestor = new GestorIngrediente( $repo );
 
             $id = '1a';
@@ -19,8 +19,9 @@ describe( "GestorIngrediente", function() {
 
             expect( $closure )->toThrow( new DadosInvalidosException() );
         } );
+        
         it( "deve retornar erro caso id for um numero neagativo", function() {
-            $repo = Double::instance();
+            $repo = Double::instance( [ 'implements' => 'RepositorioIngrediente' ] );
             $gestor = new GestorIngrediente( $repo );
 
             $id = '-2';
