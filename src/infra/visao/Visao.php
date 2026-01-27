@@ -12,7 +12,8 @@ class Visao {
     ) {}
 
     public function obterDados(): array {
-        return (array) $this->request->getParsedBody();       
+        // return (array) $this->request->getBody();
+        return (array) json_decode(file_get_contents('php://input'), true);       
     }
 
     public function exibirCadastradoComSuceso(): Response {
@@ -49,6 +50,6 @@ class Visao {
             ->withHeader( 'Content-Type', 'application/json' );
         $response->getBody()->write( json_encode( $problemas ) );
         
-        return $this->response;
+        return $response;
     }  
 }
