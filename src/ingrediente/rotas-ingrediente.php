@@ -22,4 +22,13 @@ return function( App $app, PDO $pdo ) {
     
         return $controladora->ingredientesComID();
     } );
+
+    $app->post( '/ingredientes', function (Request $request, Response $response, $args ) use ( $pdo ) {
+        $controladora = new ControladoraIngrediente(
+            new VisaoIngrediente( $request, $response, $args ),
+            new GestorIngrediente( new RepositorioIngredienteEmBDR( $pdo ) )
+        );
+    
+        return $controladora->adicionar();
+    } );
 };

@@ -9,6 +9,16 @@ class ControladoraIngrediente {
         private GestorIngrediente $gestor,
     ) {}
 
+    public function adicionar() {
+        try {
+            $dados = $this->visao->dadosIngrediente();
+            $this->gestor->salvar( $dados );
+            return $this->visao->exibirCadastradoComSuceso();
+        } catch ( Exception $e ) {
+            return $this->visao->exibirExcessao( $e );
+        } 
+    }
+
     public function ingredientes(): Response {
         try {
             $ingredientes = $this->gestor->listar();

@@ -2,6 +2,12 @@
 
 class RepositorioIngredienteEmBDR extends RepositorioEmBDR implements RepositorioIngrediente {
 
+    public function salvar( Ingrediente $ingrediente ): void {
+        $sql = 'INSERT INTO ingrediente ( nome ) VALUE ( :nome )';
+        $this->executar( $sql, [ 'nome' => $ingrediente->nome ] );
+        $ingrediente->id = $this->ultimoId();
+    }
+
     public function obter(): array {
         $sql = 'SELECT * FROM ingrediente';
         $ps = $this->executar( $sql );

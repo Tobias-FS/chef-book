@@ -8,7 +8,7 @@
         ],
         "files": [
             "src/infra/banco/conexao.php",
-            "src/infra/validacao"
+            "src/infra/validacao/sanitizacao.php"
         ]
     },
     "authors": [

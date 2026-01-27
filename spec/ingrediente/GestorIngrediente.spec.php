@@ -32,4 +32,18 @@ describe( "GestorIngrediente", function() {
             expect( $closure )->toThrow( new DadosInvalidosException() );
         } );
     } );
+
+    describe( "salvar()", function() {
+        it( "Deve retornar erro cado nome não for enviado", function() {
+            $repo = Double::instance( [ 'implements' => 'RepositorioIngrediente' ] );
+            $gestor = new GestorIngrediente( $repo );
+            
+            $dados = [];
+            $closure = function() use( $gestor, $dados ) {
+                $gestor->salvar( $dados );
+            };
+
+            expect( $closure )->toThrow( new DadosInvalidosException() );
+        } );
+    } );
 } );

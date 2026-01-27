@@ -6,6 +6,22 @@ class GestorIngrediente {
         private RepositorioIngrediente $repositorio
     ) {}
 
+    public function salvar( array $dados ): void {
+        $dados = sanitizar( $dados );
+
+        if ( ! isset( $dados[ 'nome' ] ) ) {
+            throw DadosInvalidosException::com( [ 'Nome do ingrediente não enviado' ] );
+        }
+
+        $ingrediente = new Ingrediente( 0, $dados[ 'nome' ] );
+        $problemas = $ingrediente->validar();
+        if ( $problemas ) {
+            throw DadosInvalidosException::com( $problemas );
+        }
+
+        $this->repositorio->salvar( $ingrediente );
+    }
+
     public function listar(): array {
         return $this->repositorio->obter();
     }
