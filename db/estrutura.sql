@@ -14,7 +14,7 @@ CREATE TABLE receita (
     descricao           VARCHAR(200),
     tempo_de_preparo    INT                                 NOT NULL,
     nivel               ENUM('FACIL', 'MEDIO', 'DIFICIL')   NOT NULL,
-    data_de_criacao     DATE,
+    cadastrado_em       DATETIME                            NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     categoria__id       INT                                 NOT NULL,
 
