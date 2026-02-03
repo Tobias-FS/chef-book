@@ -9,14 +9,25 @@ class ControladoraIngrediente {
         private GestorIngrediente $gestor,
     ) {}
 
-    public function adicionar() {
+    public function adicionar(): Response {
         try {
             $dados = $this->visao->dadosIngrediente();
             $this->gestor->salvar( $dados );
-            return $this->visao->exibirCadastradoComSuceso();
+            return $this->visao->exibirCadastradoComSucesso();
         } catch ( Exception $e ) {
-            return $this->visao->exibirExcessao( $e );
+            return $this->visao->exibirExcecao( $e );
         } 
+    }
+
+    public function alterar(): Response {
+        try {
+            $id = $this->visao->idIngrediente();
+            $dados = $this->visao->dadosIngrediente();
+            $this->gestor->atualizar( $id, $dados );
+            return $this->visao->exibirSucesso();
+        } catch ( Exception $e ) {
+            return $this->visao->exibirExcecao( $e );
+        }
     }
 
     public function ingredientes(): Response {
@@ -24,7 +35,7 @@ class ControladoraIngrediente {
             $ingredientes = $this->gestor->listar();
             return $this->visao->exibirIngredientes( $ingredientes ); 
         } catch( Exception $e ) {
-            return $this->visao->exibirExcessao( $e );
+            return $this->visao->exibirExcecao( $e );
         }
     }
 
@@ -34,7 +45,7 @@ class ControladoraIngrediente {
             $ingrediente = $this->gestor->listarComId( $id );
             return $this->visao->exibirIngredientes( (array) $ingrediente );
         } catch ( Exception $e ) {
-            return $this->visao->exibirExcessao( $e );
+            return $this->visao->exibirExcecao( $e );
         }
     }
 }

@@ -8,6 +8,14 @@ class RepositorioIngredienteEmBDR extends RepositorioEmBDR implements Repositori
         $ingrediente->id = $this->ultimoId();
     }
 
+    public function atualizar( Ingrediente $ingrediente ): void {
+        $sql = 'UPDATE ingrediente SET nome = :nome WHERE id = :id';
+        $this->executar( $sql, [
+            'id' => $ingrediente->id,
+            'nome' => $ingrediente->nome
+        ] );
+    }
+
     public function obter(): array {
         $sql = 'SELECT * FROM ingrediente';
         $ps = $this->executar( $sql );

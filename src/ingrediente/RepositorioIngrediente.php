@@ -21,4 +21,10 @@ interface RepositorioIngrediente {
      * 
      */
     public function salvar( Ingrediente $ingrediente ): void;
+
+    /**
+     * Atualiza um ingrediente
+     * 
+     */
+    public function atualizar( Ingrediente $ingrediente ): void;
 }
