@@ -16,7 +16,7 @@ class Visao {
         return (array) json_decode(file_get_contents('php://input'), true);       
     }
 
-    public function exibirCadastradoComSuceso(): Response {
+    public function exibirCadastradoComSucesso(): Response {
         return $this->response->withStatus( 201 );
     }
 
@@ -28,7 +28,7 @@ class Visao {
         return $this->response->withStatus( 200 );
     }
 
-    public function exibirExcessao( Exception $e ): Response {
+    public function exibirExcecao( Exception $e ): Response {
         $erroDoCliente = $e instanceof DominioException;
         $naoEcontrado = $e instanceof NaoEncontradoException;
         $status = 500;
