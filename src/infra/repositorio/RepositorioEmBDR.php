@@ -3,7 +3,7 @@
 class RepositorioEmBDR {
 
     public function __construct( 
-        private PDO $pdo 
+        protected PDO $pdo 
     ) {}
 
     public function executar( string $sql, array $parametros = [], string $mensagemErro = '' ): PDOStatement {
