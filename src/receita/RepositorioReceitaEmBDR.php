@@ -41,4 +41,40 @@ class RepositorioReceitaEmBDR extends RepositorioEmBDR implements RepositorioRec
             ] );
         }
     }
+
+    public function obter(): array {
+        $sql = <<< 'SQL'
+            SELECT 
+            r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
+            c.id as id_categoria, c.nome as nome_categoria,   
+            i.id as id_ingrediente, i.nome as nome_ingrediente,
+            ir.quantidade, ir.unidade
+            FROM receita r
+            JOIN categoria c on r.categoria__id = c.id
+            JOIN ingrediente_receita ir on ir.receita__id = r.id
+            JOIN ingrediente i on i.id = ir.ingrediente__id
+        SQL;
+        $ps = $this->executar( $sql );
+        
+        return $ps->fetchAll();
+    }
+
+    public function obterComId( int $id ): array {
+        $sql = <<< 'SQL'
+            SELECT 
+            r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
+            c.id as id_categoria, c.nome as nome_categoria,   
+            i.id as id_ingrediente, i.nome as nome_ingrediente,
+            ir.quantidade, ir.unidade
+            FROM receita r
+            JOIN categoria c on r.categoria__id = c.id
+            JOIN ingrediente_receita ir on ir.receita__id = r.id
+            JOIN ingrediente i on i.id = ir.ingrediente__id          
+            WHERE r.id = :id
+        SQL;
+        $ps = $this->executar( $sql, [ 'id' => $id ] );
+        
+        return $ps->fetchAll();
+    }
 }
+

@@ -15,4 +15,26 @@ return function( App $app, PDO $pdo ) {
 
         return $controladora->adicionar();
     });
+
+    $app->get('/receitas', function (Request $request, Response $response, $args) use ( $pdo ) {
+        $controladora = new ControladoraReceitaListagem(
+            new VisaoReceita( $request, $response, $args ),
+            new GestorReceita( 
+                new RepositorioReceitaEmBDR( $pdo ),
+                new RepositorioCategoriaEmBDR( $pdo ) )
+        );
+
+        return $controladora->receitas();
+    });
+
+    $app->get('/receitas/{id}', function (Request $request, Response $response, $args) use ( $pdo ) {
+        $controladora = new ControladoraReceitaListagem(
+            new VisaoReceita( $request, $response, $args ),
+            new GestorReceita( 
+                new RepositorioReceitaEmBDR( $pdo ),
+                new RepositorioCategoriaEmBDR( $pdo ) )
+        );
+
+        return $controladora->receitasComId();
+    });
 };
