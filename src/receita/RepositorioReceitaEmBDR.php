@@ -76,5 +76,32 @@ class RepositorioReceitaEmBDR extends RepositorioEmBDR implements RepositorioRec
         
         return $ps->fetchAll();
     }
+
+    public function obterComFiltro( array $filtros ): array {
+        $sql = <<< 'SQL'
+            SELECT 
+            r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
+            c.id as id_categoria, c.nome as nome_categoria,   
+            i.id as id_ingrediente, i.nome as nome_ingrediente,
+            ir.quantidade, ir.unidade
+            FROM receita r
+            JOIN categoria c on r.categoria__id = c.id
+            JOIN ingrediente_receita ir on ir.receita__id = r.id
+            JOIN ingrediente i on i.id = ir.ingrediente__id 
+            WHERE 1=1         
+        SQL;
+        $parametros = [];
+
+        if ( array_key_exists( 'nome', $filtros ) ) {
+            $sql .= 'AND r.nome LIKE :nome';
+            $parametros[ 'nome' ] = '%' . $filtros[ 'nome' ] . '%'; 
+        } if ( array_key_exists( 'ingrediente', $filtros ) ) {
+            $sql .= 'AND i.nome LIKE :ingrediente';
+            $parametros[ 'ingrediente' ] = '%' . $filtros[ 'ingrediente' ] . '%'; 
+        }
+        
+        $ps = $this->executar( $sql, $parametros );
+        return $ps->fetchAll();
+    }
 }
 

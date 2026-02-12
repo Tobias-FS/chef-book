@@ -55,8 +55,15 @@ class GestorReceita {
         $this->repositorioReceita->salvar($receita);
     }
 
-    public function listar(): array {
-        $linhas = $this->repositorioReceita->obter();
+    public function listar( array $filtros ): array {
+        $filtros = sanitizar( $filtros );
+
+        if ( ! empty( $filtros ) ) {
+            $linhas = $this->repositorioReceita->obterComFiltro( $filtros );
+        } else {
+            $linhas = $this->repositorioReceita->obter();
+        }
+
         return $this->instanciarReceitas( $linhas );
     }
 

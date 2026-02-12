@@ -12,6 +12,10 @@ class VisaoReceita extends Visao {
         return $this->args[ 'id' ] ?? '0';
     }
 
+    public function parametros(): array {
+        return $this->request->getQueryParams() ?? [];
+    }
+
     public function exibirReceitas( array $dados ): Response {
         $response = $this->response
             ->withStatus( 200 )

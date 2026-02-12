@@ -11,7 +11,8 @@ class ControladoraReceitaListagem {
 
     public function receitas(): Response {
         try {
-            $receitas = $this->gestor->listar();
+            $filtros = $this->visao->parametros();
+            $receitas = $this->gestor->listar( $filtros );
             return $this->visao->exibirReceitas( $receitas );
         } catch( Exception $e ) {
             return $this->visao->exibirExcecao( $e );
