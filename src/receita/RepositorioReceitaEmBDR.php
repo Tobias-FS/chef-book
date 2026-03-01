@@ -42,20 +42,34 @@ class RepositorioReceitaEmBDR extends RepositorioEmBDR implements RepositorioRec
         }
     }
 
-    public function obter(): array {
-        $sql = <<< 'SQL'
+    public function obter( array $paginacao ): array {
+        $sqlIds = 'SELECT id FROM receita ORDER BY cadastrado_em LIMIT :retornar OFFSET :ignorar';
+        $psIds = $this->executar( $sqlIds, [
+            'retornar' => (int) $paginacao[ 'limit' ],
+            'ignorar' => (int) $paginacao[ 'offset' ]
+        ] );
+        $ids = $psIds->fetchAll( PDO::FETCH_COLUMN );
+
+        if ( empty( $ids ) ) {
+            return [];
+        }
+        $idsParaConsulta = implode( ',', array_map( 'intval', $ids ) );
+
+        $sql = <<< SQL
             SELECT 
-            r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
-            c.id as id_categoria, c.nome as nome_categoria,   
-            i.id as id_ingrediente, i.nome as nome_ingrediente,
-            ir.quantidade, ir.unidade
+                r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
+                c.id as id_categoria, c.nome as nome_categoria,   
+                i.id as id_ingrediente, i.nome as nome_ingrediente,
+                ir.quantidade, ir.unidade
             FROM receita r
-            JOIN categoria c on r.categoria__id = c.id
-            JOIN ingrediente_receita ir on ir.receita__id = r.id
-            JOIN ingrediente i on i.id = ir.ingrediente__id
+            JOIN categoria c ON r.categoria__id = c.id
+            JOIN ingrediente_receita ir ON ir.receita__id = r.id
+            JOIN ingrediente i ON i.id = ir.ingrediente__id
+            WHERE r.id IN ($idsParaConsulta)
+            ORDER BY r.cadastrado_em;
         SQL;
+
         $ps = $this->executar( $sql );
-        
         return $ps->fetchAll();
     }
 
@@ -77,30 +91,53 @@ class RepositorioReceitaEmBDR extends RepositorioEmBDR implements RepositorioRec
         return $ps->fetchAll();
     }
 
-    public function obterComFiltro( array $filtros ): array {
-        $sql = <<< 'SQL'
-            SELECT 
-            r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em,
-            c.id as id_categoria, c.nome as nome_categoria,   
-            i.id as id_ingrediente, i.nome as nome_ingrediente,
-            ir.quantidade, ir.unidade
-            FROM receita r
-            JOIN categoria c on r.categoria__id = c.id
-            JOIN ingrediente_receita ir on ir.receita__id = r.id
-            JOIN ingrediente i on i.id = ir.ingrediente__id 
-            WHERE 1=1         
-        SQL;
+    public function obterComFiltro( array $filtros, array $paginacao ): array {
+        $sqlIds = 'SELECT DISTINCT r.id, r.cadastrado_em FROM receita r 
+            JOIN ingrediente_receita ir_filtro ON ir_filtro.receita__id = r.id
+            JOIN ingrediente i_filtro ON i_filtro.id = ir_filtro.ingrediente__id
+            WHERE 1=1 ';
+        
         $parametros = [];
+        $sqlFiltro = '';
 
         if ( array_key_exists( 'nome', $filtros ) ) {
-            $sql .= 'AND r.nome LIKE :nome';
-            $parametros[ 'nome' ] = '%' . $filtros[ 'nome' ] . '%'; 
-        } if ( array_key_exists( 'ingrediente', $filtros ) ) {
-            $sql .= 'AND i.nome LIKE :ingrediente';
-            $parametros[ 'ingrediente' ] = '%' . $filtros[ 'ingrediente' ] . '%'; 
+            $sqlFiltro .= ' AND r.nome LIKE :nome';
+            $parametros[ 'nome' ] = '%' . $filtros[ 'nome' ] . '%';
+        }
+        if ( array_key_exists( 'ingrediente', $filtros ) ) {
+            $sqlFiltro .= ' AND i_filtro.nome LIKE :ingrediente';
+            $parametros[ 'ingrediente' ] = '%' . $filtros['ingrediente'] . '%';
+        }
+
+        $sqlIds .= $sqlFiltro;
+        $sqlIds .= ' ORDER BY r.cadastrado_em LIMIT :retornar OFFSET :ignorar';
+        
+        $parametros['retornar'] = (int) $paginacao['limit'];
+        $parametros['ignorar'] = (int) $paginacao['offset'];
+
+        $psIds = $this->executar($sqlIds, $parametros);
+        $ids = $psIds->fetchAll(PDO::FETCH_COLUMN);
+
+        if ( empty( $ids ) ) {
+            return [];
         }
         
-        $ps = $this->executar( $sql, $parametros );
+        $idsParaConsulta = implode( ',', array_map( 'intval', $ids ) );
+
+        $sql = <<< SQL
+            SELECT r.id, r.nome, r.descricao, r.tempo_de_preparo, r.nivel, r.cadastrado_em, 
+                c.id as id_categoria, c.nome as nome_categoria,   
+                i.id as id_ingrediente, i.nome as nome_ingrediente,
+                ir.quantidade, ir.unidade
+            FROM receita r
+            JOIN categoria c ON r.categoria__id = c.id
+            JOIN ingrediente_receita ir ON ir.receita__id = r.id
+            JOIN ingrediente i ON i.id = ir.ingrediente__id
+            WHERE r.id IN ($idsParaConsulta)
+            ORDER BY r.cadastrado_em
+        SQL;
+        
+        $ps = $this->executar( $sql );
         return $ps->fetchAll();
     }
 }

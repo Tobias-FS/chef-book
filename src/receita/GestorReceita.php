@@ -2,6 +2,9 @@
 
 use Slim\Psr7\Response;
 
+const VALOR_PADRAO_OFFSET = 0;
+const VALOR_PADRAO_LIMIT = 20;
+
 class GestorReceita {
 
     public function __construct(
@@ -55,13 +58,44 @@ class GestorReceita {
         $this->repositorioReceita->salvar($receita);
     }
 
-    public function listar( array $filtros ): array {
-        $filtros = sanitizar( $filtros );
+    public function listar( array $parametros ): array {
+        $parametros = sanitizar( $parametros );
+        
+        $filtros = [];
+        if ( array_key_exists( 'nome', $parametros ) ) {
+            $filtros[ 'nome' ] = $parametros[ 'nome' ];
+        } if ( array_key_exists( 'ingrediente', $parametros ) ) {
+            $filtros[ 'ingrediente' ] = $parametros[ 'ingrediente' ];
+        }
+            
+        $paginacao = [
+            'offset' => VALOR_PADRAO_OFFSET,
+            'limit'  => VALOR_PADRAO_LIMIT
+        ];
+        if ( array_key_exists( 'offset', $parametros ) ) {
+            if ( ! is_numeric( $parametros[ 'offset' ] ) || intval( $parametros[ 'offset'] ) < 0 ) {
+                throw DadosInvalidosException::com( [ 'O offset deve ser um número maior ou igual a zero.' ] );
+            }
+        
+            $paginacao[ 'offset' ] = (int) $parametros[ 'offset' ];
+        }
+        if ( array_key_exists( 'limit', $parametros ) ) {
+            if ( ! is_numeric( $parametros[ 'limit' ] ) || intval( $parametros[ 'limit'] ) < 1 )  {
+                throw DadosInvalidosException::com( [ 'O limit deve ser um número maior que zero.' ] );
+            }
+            
+            $paginacao[ 'limit' ] = (int) $parametros[ 'limit' ];
+            
+            if ( $paginacao[ 'limit' ] > VALOR_PADRAO_LIMIT ) {
+                $paginacao[ 'limit' ] = VALOR_PADRAO_LIMIT;
+            } 
+            
+        }
 
         if ( ! empty( $filtros ) ) {
-            $linhas = $this->repositorioReceita->obterComFiltro( $filtros );
+            $linhas = $this->repositorioReceita->obterComFiltro( $filtros, $paginacao );
         } else {
-            $linhas = $this->repositorioReceita->obter();
+            $linhas = $this->repositorioReceita->obter( $paginacao );
         }
 
         return $this->instanciarReceitas( $linhas );
@@ -72,7 +106,7 @@ class GestorReceita {
             throw DadosInvalidosException::com( [ 'Id deve ser um numero positivo' ] );
         }
 
-        $linhas = $this->repositorioReceita->obterComId( $id );
+        $linhas = $this->repositorioReceita->obterComId( (int) $id );
         return $this->instanciarReceitas( $linhas );
     }
 
