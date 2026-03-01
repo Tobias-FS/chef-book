@@ -9,7 +9,13 @@ class RepositorioEmBDR {
     public function executar( string $sql, array $parametros = [], string $mensagemErro = '' ): PDOStatement {
         try {
             $ps = $this->pdo->prepare( $sql );
-            $ps->execute( $parametros );
+
+            foreach ( $parametros as $chave => $valor ) {
+                $tipo = is_int( $valor ) ? PDO::PARAM_INT : PDO::PARAM_STR;
+                $ps->bindValue( ':' . $chave, $valor, $tipo );
+            }
+
+            $ps->execute();
 
             return $ps;
         } catch ( PDOException $e ) {
